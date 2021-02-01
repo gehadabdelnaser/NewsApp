@@ -5,55 +5,60 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.gehad.news.api.ApiManger
 import com.gehad.news.data.ArticlesItem
-import com.gehad.news.data.NewsResponse
 import com.gehad.news.data.SourcesItem
-import com.gehad.news.data.SourcesResponse
 import com.gehad.news.model.Constant
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.gehad.news.repositries.sources.NewsSourcesRepo
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.functions.Consumer
+import io.reactivex.schedulers.Schedulers
 
-class HomeViewModel :ViewModel(){
 
-    var sourcesLiveData=MutableLiveData<List<SourcesItem?>>()
-    var newsLiveData=MutableLiveData<List<ArticlesItem?>?>()
-    var showLoadingLiveData=MutableLiveData<Boolean>()
-    var showMassageLiveData=MutableLiveData<String>()
+class HomeViewModel(private val newsSourcesRepo : NewsSourcesRepo ) : ViewModel() {
 
-     fun getNewsSources() {
-        ApiManger.getWebService().getSources(Constant.apiKey,"en")
-            .enqueue(object : Callback<SourcesResponse> {
-                override fun onFailure(call: Call<SourcesResponse>, t: Throwable) {
-                    showLoadingLiveData.value=false
-                    showMassageLiveData.value=t.localizedMessage
-                }
+    lateinit var sourcesLiveData : MutableLiveData<List<SourcesItem>>
 
-                override fun onResponse(
-                    call: Call<SourcesResponse>,
-                    response: Response<SourcesResponse>
-                ) {
-                    showLoadingLiveData.value=false
-                    sourcesLiveData.value=response.body()?.sources
-                }
-            })
+    val newsLiveData=MutableLiveData<List<ArticlesItem?>?>()
+    val showLoadingLiveData=MutableLiveData<Boolean>()
+    val showMassageLiveData=MutableLiveData<String>()
+    private val compositeDisposable=CompositeDisposable()
+
+
+    init{
+        sourcesLiveData=newsSourcesRepo.sourceList
+        newsSourcesRepo.getNewsSources()
     }
 
-     fun getNewsBySourceId(sourceId:String,word:String?){
-        ApiManger.getWebService().getNews(Constant.apiKey ,"en",sourceId ,word)
-            .enqueue(object :Callback<NewsResponse>{
-                override fun onFailure(call: Call<NewsResponse>, t: Throwable) {
 
-                    showMassageLiveData.value=t.localizedMessage
-                }
+    private val errorHandler= Consumer<Throwable>{
+        showLoadingLiveData.value=false
+        showMassageLiveData.value=it.localizedMessage
+    }
 
-                override fun onResponse(
-                    call: Call<NewsResponse>,
-                    response: Response<NewsResponse>
-                ) {
-                    newsLiveData.value=response.body()?.articles
+     fun getNewsSources() {
 
-                }
-            })
+         showLoadingLiveData.value=true
+         newsSourcesRepo.getNewsSources()
+    }
+
+     fun getNewsBySourceId(sourceId: String, word: String?){
+         // used RX java
+        val disposable = ApiManger.getWebService()
+            .getNews(Constant.apiKey, "en", sourceId, word)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                newsLiveData.value = it?.articles
+            }, this.errorHandler)
+
+         // dispose for all operation in background
+         compositeDisposable.add(disposable)
+
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        compositeDisposable.clear()
     }
 
 }
