@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 
-open abstract class BaseActivity:AppCompatActivity() {
+abstract class BaseActivity:AppCompatActivity(){
 
     lateinit var activity:AppCompatActivity
 

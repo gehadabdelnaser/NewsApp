@@ -1,9 +1,12 @@
 package com.gehad.news.data
 
 import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
+@Entity
 @Parcelize
 data class SourcesItem(
 
@@ -28,3 +31,7 @@ data class SourcesItem(
 	@field:SerializedName("url")
 	val url: String? = null
 ):Parcelable
+{
+	@PrimaryKey(autoGenerate = true)
+	var idOfNews:Int?=null
+}

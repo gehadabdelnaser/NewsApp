@@ -6,7 +6,6 @@ import android.view.Menu
 import android.view.View
 import android.widget.SearchView
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.gehad.news.R
 import com.gehad.news.adapter.NewsAdapter
 import com.gehad.news.data.ArticlesItem
@@ -16,6 +15,7 @@ import com.gehad.news.ui.NewsDetailsActivity
 import com.google.android.material.tabs.TabLayout
 import com.gehad.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_home.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class HomeActivity : BaseActivity() ,TabLayout.OnTabSelectedListener {
@@ -23,14 +23,15 @@ class HomeActivity : BaseActivity() ,TabLayout.OnTabSelectedListener {
     private var adapter= NewsAdapter(null)
     private var source:SourcesItem?=null
     private var search:String?=null
-    private lateinit var viewModel: HomeViewModel
+
+    // use koin dependency injection
+    private val homeViewModel: HomeViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        viewModel=ViewModelProvider(this).get(HomeViewModel::class.java)
-        viewModel.getNewsSources()
+        homeViewModel.getNewsSources()
         observeLiveData()
         news_recycler_view.adapter=adapter
 
@@ -44,15 +45,16 @@ class HomeActivity : BaseActivity() ,TabLayout.OnTabSelectedListener {
     }
 
     private fun observeLiveData(){
-        viewModel.sourcesLiveData.observe(this, Observer {
+        homeViewModel.sourcesLiveData.observe(this, {
+            progress_bar.visibility= View.INVISIBLE
             setUpTabLayout(it)
         })
-        viewModel.showLoadingLiveData.observe(this, Observer {
+        homeViewModel.showLoadingLiveData.observe(this,{
             if (it == false){
                 progress_bar.visibility= View.GONE
             }
         })
-        viewModel.showMassageLiveData.observe(this, Observer {
+        homeViewModel.showMassageLiveData.observe(this,{
             showMassage(null,it,null,null,null,null,true)
         })
     }
@@ -102,8 +104,8 @@ class HomeActivity : BaseActivity() ,TabLayout.OnTabSelectedListener {
 
     private fun getNews(word:String?){
 
-        viewModel.getNewsBySourceId(source!!.id?:"",word)
-        viewModel.newsLiveData.observe(this, Observer {
+        homeViewModel.getNewsBySourceId(source!!.id?:"",word)
+        homeViewModel.newsLiveData.observe(this,  {
             adapter.changeData(it)
         })
         news_recycler_view.layoutManager?.scrollToPosition(0)
