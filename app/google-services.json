@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "449026945464",
+    "project_id": "news-app-8224b",
+    "storage_bucket": "news-app-8224b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:449026945464:android:c4ed3559997aafc26b5f4d",
+        "android_client_info": {
+          "package_name": "com.gehad.news"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "449026945464-bqfmanlacg0s8dgbd1p9l7jfq3pl70nm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCVzK5H71-_4o1DxWvoR_PGyaBSQ0Jy-0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "449026945464-bqfmanlacg0s8dgbd1p9l7jfq3pl70nm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
