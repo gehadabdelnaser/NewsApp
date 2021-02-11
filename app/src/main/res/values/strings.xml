@@ -2,4 +2,6 @@
     <string name="app_name">News</string>
     <string name="search">Search</string>
     <string name="language">Language</string>
+    <string name="news_channel_id">news channel</string>
+    <string name="new_channel_description">this channel to get important news</string>
 </resources>
