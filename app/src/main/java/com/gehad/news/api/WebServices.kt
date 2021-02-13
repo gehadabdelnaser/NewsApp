@@ -10,13 +10,13 @@ interface WebServices {
 
     //sources
     @GET("sources")
-    fun getSources(@Query("apiKey") apiKey:String
-                   ,@Query("language") language:String): Single<SourcesResponse>
+    suspend fun getSources(@Query("apiKey") apiKey:String
+                   ,@Query("language") language:String): SourcesResponse
 
     //everything
     @GET("everything")
-    fun getNews(@Query("apiKey") apiKey:String
+    suspend fun getNews(@Query("apiKey") apiKey:String
                 ,@Query("language") language:String
                 ,@Query("sources") sources:String
-                ,@Query("q") search:String?): Single<NewsResponse>
+                ,@Query("q") search:String?): NewsResponse
 }

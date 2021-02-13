@@ -10,12 +10,10 @@ import com.gehad.news.data.offlineDatabase.MyDataBase
 class OfflineSourcesRoomBased(val context: Context):NewsSourcesRepo.OfflineDataSource {
 
 
-    override fun getSources(): List<SourcesItem> {
+    override suspend fun getSources(): List<SourcesItem> {
         val data = MyDataBase.getInstance(context)?.newsDoe()?.getAllNews()
 
-        if(data !=null) return data
-        else
-            return listOf()
+        return data.orEmpty()
     }
 
     override fun cacheData(data: List<SourcesItem>) {

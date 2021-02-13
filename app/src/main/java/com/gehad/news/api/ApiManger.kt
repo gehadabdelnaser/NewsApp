@@ -12,7 +12,7 @@ class ApiManger {
             retrofit=Retrofit.Builder()
                 .baseUrl("http://newsapi.org/v2/")
                 .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            //    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build()
         }
 
